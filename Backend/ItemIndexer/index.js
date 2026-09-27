@@ -18,7 +18,7 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.use(methodOverride('_method'));
 
-const uri = "mongodb://127.0.0.1:27017/";
+const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/itemindexer";
 let db;
 
 app.use(cors());

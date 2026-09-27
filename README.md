@@ -1,35 +1,59 @@
-# React Shopping To-Do List 
+# React Shopping List / Store Inventory
 
-This project is a React-based to-do list application that demonstrates various key concepts in React development.
+This started as a to-do list for a Humber course project and turned into a small store inventory app. The back end is Node/Express with MongoDB, and the front end is React.
 
-## Objectives and Implementation
-- Integrate a React front-end with a Node.js back-end: The application is set up as a front-end project in React. 
+## What it does
 
-- Understand JSX Syntax: Utilized in all components, specifically seen in ToDoList.js.
+**Back end (Express + MongoDB)**
+- REST routes to list, add and update store items (each item has a name and a price)
+- `/api/json` returns all the items as JSON, which the React app uses
+- Register and login with Passport (local strategy). Passwords are hashed with bcrypt
+- You have to be logged in to add an item
+- Server-side pages are done with EJS (`views/` folder)
 
-- Create Functional and Class Components: This application uses functional components (ToDoList).
+**Front end (React)**
+- `FetchAPI.js` calls the back end and shows the inventory with prices
+- `ItemIndexer.js` is a component where you add items and mark them completed. It uses `useState` and `useEffect`
+- `useItemCounter.js` is a custom hook I wrote that counts how many items were added
 
-- Utilize Props and State: Demonstrated in ToDoList.js through the use of the useState hook for managing task data.
+## Run it locally
 
-- Implement Event Handling: Event handling is implemented in the handleSubmit and markAsCompleted functions in ToDoList.js.
+You need Node.js and MongoDB running locally on the default port (27017). The back end connects to `mongodb://127.0.0.1:27017/`.
 
-- Use Conditional Rendering: Displaying a message when no tasks are available in ToDoList.js.
+**Back end** (runs on port 3000)
+```
+cd Backend/ItemIndexer
+copy .env.example .env
+npm install
+node index.js
+```
+Put your own random value for `SECRET` in `.env`. It's used for the login sessions.
 
-- Render Lists and Keys: Tasks are rendered as a list, with each item having a unique key, in ToDoList.js.
+Then open http://localhost:3000
 
-In the project directory, you can run:
+**Front end**
+```
+cd FrontEnd/client
+npm install
+npm start
+```
+The back end is already on port 3000, so React will ask to use another port. Type `y` and it opens on 3001.
 
+## API routes
 
-Project Structure
-- FrontEnd folder that contains React components.
-- ToDoList.js: Main component for the to-do list.
-- useTaskCounter.js: Custom hook for tracking and logging the total number of tasks added. (useEffect, Custom Hooks, useState)
-- App.js: Main entry point of the application.
+| Method | Route | What it does |
+|---|---|---|
+| GET | `/api/items` | Page with all items |
+| GET | `/api/json` | All items as JSON |
+| GET | `/api/items/add` | Add item form (login required) |
+| POST | `/api/items` | Add an item |
+| POST | `/api/items/update/:id` | Update an item |
+| GET/POST | `/register` | Create an account |
+| GET/POST | `/login` | Log in |
 
-### `npm start`
+## Things I'd fix next
 
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- There are two `POST /login` routes in `index.js`. Express only runs the first one, so the JWT code in the second one never runs. I'd remove it or merge them
+- `POST /api/items` isn't behind the login check, only the form page is
+- `ItemIndexer` isn't shown in `App.js` yet, only `FetchAPI` is
+- Add a delete route and some tests
